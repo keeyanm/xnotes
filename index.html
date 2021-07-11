@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src ="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&family=Poppins:wght@200&family=Roboto:wght@100;300&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+        <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+        <script>
+            var datatouse;
+            var searchoptions;
+            function getdataenglish() {
+                $.ajax({
+                    type:"GET",
+                    url: "https://trezlorapi.azurewebsites.net/xnotes",
+                    success: function(data){
+                        document.querySelector('#pagecontent').style.opacity = 1;
+                        document.querySelector('body').style.pointerEvents = 'auto';
+                        document.querySelector('.loading').innerHTML = '';
+                        console.log(data.slice(1));
+                        var datatouse = data.slice(1)
+                        var searchoptions = []
+                        var titles = []
+                        for (i=0; i < datatouse.length; i++) {
+                            var optionstring = datatouse[i]['title'].trim() + ', ' + datatouse[i]['author'].trim()
+                            if (!(titles.includes(optionstring))) {
+                                titles.push(optionstring)
+                                if (datatouse[i]['type'].trim() == 'P') {
+                                    var cat = 'Poetry'
+                                }
+                                if (datatouse[i]['type'].trim() == 'D') {
+                                    var cat = 'Drama'
+                                }
+                                if (datatouse[i]['type'].trim() == 'N') {
+                                    var cat = 'Prose'
+                                }
+                                searchoptions.push(
+                                    {
+                                        'label': optionstring,
+                                        'category': cat
+                                    }
+                                )
+                            }
+                        }
+
+                        document.querySelectorAll('.option').forEach(element => {
+                            element.addEventListener('click', (e) => {
+                                if (!( (e.srcElement.childNodes[0].data == 'Poetry') || (e.srcElement.childNodes[0].data == 'Prose') || (e.srcElement.childNodes[0].data == 'Drama'))) {
+                                    console.log('ok')
+                                    console.log(e.srcElement.querySelector('p').innerHTML)
+                                    makeenglishpage( e.srcElement.querySelector('p').innerHTML, 0, searchoptions, datatouse)
+                                }
+                                else {
+                                    makeenglishpage( e.srcElement.childNodes[0].data, 0, searchoptions, datatouse)
+                                }
+                            }, false)
+                        })
+
+                        populateenglish(searchoptions, datatouse);
+                    },
+                    error: function(error) {
+                        return error;
+                    }
+                })
+            }
+
+            function populateenglish(searchoptions, data) {
+                $('#englishsearch').catcomplete({
+                    source: searchoptions,
+                    disabled: false,
+                    minLength: 1,
+                    appendTo: '#menu-container-eng',
+                    delay: 0,
+                    select: function(event, ui) { 
+                        makeenglishpage(ui.item['category'], ui.item['label'], searchoptions, data)
+                        return false;
+                    }
+                })
+            }
+
+            function fixstring(text) {
+                return text.replace(/-\t‘/g, '<br><br>‘').replace(/-\t“/g, '<br><br>“')
+            }
+
+            function replaceat(str, index, replacement) {
+                return str.substr(0, index) + replacement + str.substr(index + replacement.length);
+            }
+
+            function create(type, classex) {
+                var x = document.createElement(type);
+                x.className = classex
+                return x
+            }
+
+            function makeenglishpage(category, title, searchoptions, datatouse) {
+                if (title==0) {
+                    console.log(category);
+                    document.querySelector('#pagecontent').style.display = 'none'
+                    document.querySelector('#englishcontent').style.display = 'block'
+                    $('#englishsearch2').catcomplete({
+                        source: searchoptions,
+                        minLength: 1,
+                        appendTo: '#menu-container-eng2',
+                        delay: 0,
+                        select: function(event, ui) { 
+                            makeenglishpage(ui.item['category'], ui.item['label'], searchoptions, datatouse)
+                            return false;
+                        }
+                    })
+                    document.querySelector('#menu-container-eng2').style.display = 'block';
+                    document.querySelector('#secondarytitleenter').innerHTML = category
+                    var vnav = document.querySelector('.verticalnavbar');
+                    vnav.innerHTML = '';
+
+                    var searchoptionstouse = []
+
+                    for (i=0; i < searchoptions.length; i++) {
+                        console.log(category)
+                        if (searchoptions[i]['category'] == category) {
+                            searchoptionstouse.push(searchoptions[i])
+                        }
+                    }
+
+                    for (i=0; i < searchoptionstouse.length; i++) {
+                        var piece = document.createElement('div');
+                        piece.className = 'piece'
+                        piece.dataset.title =  searchoptionstouse[i]['label']
+                        piece.dataset.category =  searchoptionstouse[i]['category']
+                        piece.innerHTML = searchoptionstouse[i]['label'].substring(0,searchoptionstouse[i]['label'].indexOf(','))
+                        vnav.append(piece)
+                    }
+
+                    document.querySelector('.homecontainer').addEventListener('click', function() {
+                        document.querySelector('#englishcontent').style.display = 'none'
+                        document.querySelector('#pagecontent').style.display = 'block'
+                        document.querySelector('#englishsearch').value = '';
+                    })
+                    var pieces = vnav.childNodes
+                    for (i=0; i < pieces.length; i++) {
+                        console.log(pieces[i]);
+                        pieces[i].addEventListener('click', function() {
+                            var title2 = this.dataset.title
+                            var category2 = this.dataset.category
+                            makeenglishpage(category2, title2, searchoptions, datatouse)
+                        })
+                    }
+                    
+                    if (category=='Poetry') {
+                        document.querySelector('#name').innerHTML = 'Choose any of the below poems for a full-depth analysis'
+                        vnav.style.marginTop = "50px";
+                        vnav.style.marginBottom = '0px';
+                    }
+                    if (category=='Prose') {
+                        document.querySelector('#name').innerHTML = '<div class="green">A Separate Peace, John Knowles </div> Choose any of the below essay topics for a full-depth analysis'
+                        vnav.style.marginTop = "150px";
+                    }
+                    if (category=='Drama') {
+                        document.querySelector('#name').innerHTML = '<div class="green">The Crucible, Arthur Miller</div> Choose any of the below essay topics for a full-depth analysis'
+                        vnav.style.marginTop = "150px";
+                    }
+                }
+
+                else {
+                    var titleonly = title.substring(0,title.indexOf(',')).trim()
+                    document.querySelector('#pagecontent').style.display = 'none'
+                    document.querySelector('#englishcontent').style.display = 'block'
+                    $('#englishsearch2').catcomplete({
+                        source: searchoptions,
+                        minLength: 1,
+                        appendTo: '#menu-container-eng2',
+                        delay: 0,
+                        select: function(event, ui) { 
+                            makeenglishpage(ui.item['category'], ui.item['label'], searchoptions, datatouse)
+                            return false;
+                        }
+                    })
+                    document.querySelector('#menu-container-eng2').style.display = 'block';
+                    document.querySelector('#secondarytitleenter').innerHTML = category
+                    var vnav = document.querySelector('.verticalnavbar');
+                    vnav.innerHTML = '';
+
+                    var searchoptionstouse = []
+
+                    for (i=0; i < searchoptions.length; i++) {
+                        console.log(category)
+                        if (searchoptions[i]['category'] == category) {
+                            searchoptionstouse.push(searchoptions[i])
+                        }
+                    }
+
+                    for (i=0; i < searchoptionstouse.length; i++) {
+                        var piece = document.createElement('div');
+                        piece.className = 'piece'
+                        piece.dataset.title =  searchoptionstouse[i]['label']
+                        piece.dataset.category =  searchoptionstouse[i]['category']
+                        piece.innerHTML = searchoptionstouse[i]['label'].substring(0,searchoptionstouse[i]['label'].indexOf(','))
+                        vnav.append(piece)
+                    }
+
+                    document.querySelector('.homecontainer').addEventListener('click', function() {
+                        document.querySelector('#englishcontent').style.display = 'none'
+                        document.querySelector('#pagecontent').style.display = 'block'
+                        document.querySelector('#englishsearch').value = '';
+                        document.querySelector('.text').innerHTML = '';
+                    })
+                    var pieces = vnav.childNodes
+                    for (i=0; i < pieces.length; i++) {
+                        console.log(pieces[i]);
+                        pieces[i].addEventListener('click', function() {
+                            var title2 = this.dataset.title
+                            var category2 = this.dataset.category
+                            makeenglishpage(category2, title2, searchoptions, datatouse)
+                        })
+                    }
+                    if (category=='Poetry') {
+                        vnav.style.marginTop = "50px";
+                        vnav.style.marginBottom = '0px';
+                        document.querySelector('#name').innerHTML = title.substring(0,title.indexOf(',')) + ': An Analysis'
+                    }
+                    if (category=='Prose') {
+                        document.querySelector('#name').innerHTML = '<div class="green">A Separate Peace, John Knowles </div>' + title.substring(0,title.indexOf(',')) + ': An Analysis'
+                        vnav.style.marginTop = "150px";
+                        vnav.style.marginBottom = '50px';
+                    }
+                    if (category=='Drama') {
+                        document.querySelector('#name').innerHTML = '<div class="green">The Crucible, Arthur Miller</div>' + title.substring(0,title.indexOf(',')) + ': An Analysis'
+                        vnav.style.marginTop = "150px";
+                        vnav.style.marginBottom = '50px';
+                    }
+                    var textdiv = document.querySelector('.text');
+                    textdiv.innerHTML = '';
+                    var dataforthis = []
+                    for (i=0; i < datatouse.length; i++) {
+                        if (datatouse[i]['title'] == titleonly) {
+                            dataforthis.push(datatouse[i]);
+                        }
+                    }
+                    for (i=0; i <dataforthis.length; i++) {
+                        var obj = dataforthis[i]
+                        var theme = dataforthis[i]['theme']
+                        var info = dataforthis[i]['text']
+                        info = fixstring(info)
+                        if (theme[0].trim() == 'Introduction') {
+                            textdiv.innerHTML +=  `               
+                            <div class='para'>
+                                <div class='paratitlecontainer'>
+                                    <div class='paratitle'>INTRODUCTION</div>
+                                </div>
+                                <div class='info'>${info}
+                                </div>
+                            </div>      
+                        `
+                        }
+                        else {
+                            var para = create('div', 'para')
+                            var parathemecontainer = create('div', 'parathemecontainer')
+                            var themetitle = create('div', 'themetitle')
+                            var themeimg = create('img', 'themeimg')
+                            themeimg.src = 'theme.png'
+                            themetitle.innerHTML = 'THEMES: '
+                            para.append(parathemecontainer)
+
+                            parathemecontainer.append(themeimg)
+                            parathemecontainer.append(themetitle)
+                            var themelist = theme.join(" ").split(',');
+                            for (j=0; j < themelist.length;j++) {
+                                var paratheme = create('div', 'paratheme')
+                                paratheme.innerHTML = themelist[j].trim()
+                                parathemecontainer.append(paratheme)
+                            }
+
+                            var paratechniquecontainer = create('div', 'paratechniquecontainer')
+                            var techniquetitle = create('div', 'techniquetitle')
+                            var techniqueimg = create('img', 'techniqueimg')
+                            techniqueimg.src = 'technique.png'
+                            if (category=='Poetry') {
+                                techniquetitle.innerHTML = 'TECHNIQUE: '                            }
+                            if (category=='Prose') {
+                                techniquetitle.innerHTML = 'TOPIC: '
+                            }
+                            if (category=='Drama') {
+                                techniquetitle.innerHTML = 'TOPIC: '
+                            }
+                            para.append(paratechniquecontainer)
+                            paratechniquecontainer.append(techniqueimg)
+                            paratechniquecontainer.append(techniquetitle)
+                            var techniquelist = dataforthis[i]['technique'].join(" ").split(',');
+                            console.log(techniquelist);
+                            for (j=0; j < techniquelist.length;j++) {
+                                var paratechnique = create('div', 'paratechnique')
+                                paratechnique.innerHTML = techniquelist[j].trim()
+                                paratechniquecontainer.append(paratechnique)
+                            }
+
+                            para.append(paratechniquecontainer)
+
+                            console.log(paratechniquecontainer)
+
+                            var infosec = create('div', 'info')
+                            infosec.innerHTML = info
+                            para.append(infosec)
+                            document.querySelector('.text').append(para);
+                        }
+                    }
+                    console.log(dataforthis);
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                var x = window.matchMedia("(max-width: 768px)")
+                if (x.matches) {
+                    var searches = document.querySelectorAll('.search');
+                    for (i=0; i < searches.length; i++) {
+                        console.log(searches[i])
+                        if (i==0) {
+                            searches[i].placeholder = 'Search for any Title or Writer'
+                        }
+                        else {
+                            searches[i].placeholder = 'Search for any Case Study'
+                        }
+                    }
+                }
+                $.widget( "custom.catcomplete", $.ui.autocomplete, {
+                    _renderMenu: function( ul, items ) {
+                        var that = this,
+                            currentCategory = "";
+                        $.each( items, function( index, item ) {
+                            if ( item.category != currentCategory ) {
+                                ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+                                currentCategory = item.category;
+                            }
+                            that._renderItemData( ul, item );
+                        });
+                    }
+                });
+                getdataenglish();
+                $('#credits').hover(function() {
+                    $(this).html('This is a description of why I am suited to be giving you notes and about how truly fantastic I am and I will fill this later')
+                    $('#credits').animate({
+                        width: '750px',
+                        height: '150px'
+                    })
+                    $(this).css('text-align', 'left')
+                    },
+                    function() {
+                        $('#credits').text('From Keeyan Mukherjee')
+                        $(this).css('text-align', 'right')
+                        $('#credits').animate({
+                            width: '200px',
+                            height: '40px'
+                        });
+                    }
+                )
+                // $('#credits').mouseout(function() {
+                //     $('#credits').text = 'From Keeyan Mukherjee'
+                //     $('#credits').animate({
+                //         width: '200px',
+                //         height: '40px'
+                //     });
+                // })
+                document.querySelectorAll('.option').forEach(element => {
+                    element.addEventListener('mouseover', (e) => {
+                        var bar = e.srcElement.querySelector('.highlightbar');
+                        bar.style.display = 'block';
+                    }, false)
+                    element.addEventListener('mouseout', (e) => {
+                        var bar = e.srcElement.querySelector('.highlightbar');
+                        bar.style.display = 'none';
+                    }, false)
+                })
+
+                document.querySelectorAll('.optiontext').forEach(element => {
+                    element.addEventListener('mouseover', (e) => {
+                        var bar = e.srcElement.parentElement.querySelector('.highlightbar');
+                        bar.style.display = 'block';
+                    }, false)
+                    element.addEventListener('mouseout', (e) => {
+                        var bar = e.srcElement.parentElement.querySelector('.highlightbar');
+                        bar.style.display = 'none';
+                    }, false)
+                })
+            });
+        </script>
+        <style>
+            .ui-helper-hidden-accessible { display:none; }
+
+            .ui-autocomplete {
+                position: absolute;
+                overflow-x: auto;
+                border: 2px solid gray;
+                background-color: white;
+                cursor: default;
+                z-index: 300 !important;
+                padding-left: 0px;
+            }
+
+            .ui-menu {
+                max-height: 600px;
+                max-width: 90%;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+            .ui-autocomplete-category
+            {
+                background-color: #6699FF;
+                max-height: 60px;    
+                min-height: 60px; 
+                font-weight: bold;
+                color: white;
+                padding: 15px;
+                font-size: larger;
+            }
+
+            .ui-corner-all {
+                color: black !important;
+            }
+
+            .ui-menu .ui-menu-item {
+                color: black !important;
+                border: 1px solid lightgray;
+                max-height: 60px;    
+                min-height: 60px;  
+                overflow: hidden;
+                cursor: pointer;
+                width: 100%;
+                margin-left:0px;
+                left:0px;
+            }
+
+            .ui-menu-item {
+                color: black !important;
+                padding: 15px;
+                font-family: 'Montserrat', sans-serif !important;
+                font-size: 15px;
+                font-weight: bold;
+                overflow-x: hidden;
+                white-space: nowrap;
+            }
+
+            .ui-menu-item:hover {
+                background-color: lightgray;
+            }
+
+            body {
+                pointer-events: none;
+                font-family: 'Montserrat', sans-serif;
+                height: 100%;
+                overflow-x: hidden;
+            }
+            #pagecontent {
+                opacity: 0.2;
+            }
+            .top {
+                width: 100%;
+                background-color: #6699FF;
+                height: 70px;
+            }
+            .top2 {
+                margin-top: -20px;
+                width: 100%;
+                background-color: #3779ff;
+                height: 70px;
+            }
+            .optionslist {
+                color: white;
+                font-size: 2rem;
+                display: flex;
+                width:100%;
+            }
+            .option {
+                padding-top: 20px;
+                height: 70px;
+                position: relative;
+                z-index: 2 !important;
+            }
+
+            .optiontext {
+                padding-left: 25px;
+                padding-right: 25px;
+                position: relative;
+                z-index: 1 !important;
+            }
+            .option:hover {
+                opacity: 1;
+                background-color: #003399;
+                box-shadow: 0px 20px 40px rgba(0,0,0,0.4);
+                transform: scale(1.05,1.05);
+            }
+            .highlightbar {
+                background-color: white;
+                position: relative;
+                bottom: -5%;
+                width:100%;
+                height:10px;
+                display: none;
+            }
+            .header > .optiontext {
+                color: black;
+                font-weight: 900;
+            }
+            .header {
+                margin-left:30px;
+            }
+            .header:hover {
+                background-color: #6699FF !important;
+            }
+            .headergeo:hover {
+                background-color: #3779ff !important;
+            }
+            .lit {
+                margin-right: 12px;
+            }
+            .litop {
+                margin-left: 20px;
+            }
+
+            .litop2 {
+                margin-left: 30px;
+            }
+
+            .topsec {
+                height: 170px;
+                width:100%;
+                padding-left: 20px;
+            }
+            #big {
+                padding-left: 70px;
+                padding-top: 10px;
+                font-size: 50px;
+                display: flex;
+            }
+            .green {
+                color: #6699FF;
+            }
+            #extra {
+                padding-left: 70px;
+                padding-top: 20px;
+            }
+            #realheader {
+                display: flex;
+            }
+            .astar {
+                color: #60b922;
+                font-size: 50px;
+                text-align: center; 
+                padding-right: 100px;
+                padding-top: 70px;
+            }
+            #grades {
+                display: flex;
+                padding-left:50px;
+            }
+            .sub {
+                color: black;
+                font-size: 12px; 
+                font-family: 'Montserrat';
+            }
+            .desc {
+                padding-left: 2rem;
+                font-size: 12px; 
+                text-align: center;
+                vertical-align: middle;
+                line-height: 70px;
+                overflow-x: auto;
+                color: black;
+            }
+            .descgeopadding {
+                padding-left:0.25rem;
+            }
+            .biglow {
+                width:100%;
+            }
+            .lower {
+                width: 100%;
+                height:100%;
+                display: flex;
+            }
+            .col-sm {
+                width:50%;
+                height:100%;
+            }
+            .eng {
+                border-right: 5px solid #6699FF;
+                padding-top: 20px;
+                padding-left: 50px;
+            }
+            .geo {
+                padding-top: 20px;
+                position: relative;
+                left:4.5%;
+            }
+            .searchbar {
+                width: 90%;
+                height: 70px;
+                box-shadow: 0px 5px 10px rgba(0,0,0,0.2);
+                border-radius: 5px;
+                margin-top: 30px;
+            }
+            .loading {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                height: 40px;
+                width: 40px;
+                transform: translate(-50%, -50%) rotate(45deg) translate3d(0, 0, 0);
+                animation: animate 1.2s ease-in-out infinite;
+            }
+
+            @keyframes animate {
+                0%,
+                10%,
+                100% {
+                    height: 40px;
+                    width: 40px;
+                }
+                65% {
+                    height: 70px;
+                    width: 70px;
+                }
+            }
+
+            .loading > span {
+                position: absolute;
+                display: block;
+                width: 20px;
+                height: 20px;
+                animation: rotate 1.2s linear both infinite;
+            }
+
+            @keyframes rotate {
+                0%,
+                30% {
+                    transform: rotate(0);
+                }
+                65% {
+                    transform: rotate(-40deg);
+                }
+                100% {
+                    transform: rotate(-90deg);
+                }
+            }
+
+            .loading > span:nth-child(1) {
+                top: 0;
+                left: 0;
+                background: #55d462;
+            }
+
+            .loading > span:nth-child(2) {
+                top: 0;
+                right: 0;
+                background: #8675e5;
+            }
+
+            .loading > span:nth-child(3) {
+                bottom: 0;
+                left: 0;
+                background: #d84c77;
+            }
+
+            .loading > span:nth-child(4) {
+                bottom: 0;
+                right: 0;
+                background: #fd9a3f;
+            }
+
+            .search {
+                vertical-align: middle;
+                line-height: 70px;
+                padding-left: 25px;
+                border: none;
+                height: 100%;
+                padding-left: 25px;
+                width: 100%;
+            }
+            .imgicon {
+                width:40px;
+                height: 40px;
+                position: relative;
+                float:right;
+                margin-top:-55px;
+                margin-right: 20px;
+            }
+            
+            .gallery {
+                width:93%;
+                margin-left:-15px;
+                height: 300px;
+            }
+            #myCarousel {
+                margin-top: 45px;
+                width:100%;
+                height: 300px;
+            }
+            #myCarousel2 {
+                margin-top: 45px;
+                width:100%;
+                height: 300px;
+            }
+            .carousel-inner {
+                margin-top: 45px;
+                width:100%;
+                height: 300px;
+            }
+            .galimg {
+                height:300px !important;
+                width:100%;
+            }
+            .carousel-caption {
+                position: fixed;
+            }
+            #englishcontent {
+                display: none;
+                width: 100%;
+                height: 80px;
+                margin-left: 0px;
+            }
+            #engtop {
+                float: top;
+                height: 80px;
+                display: flex;
+            }
+            #topsearch {
+                padding-left:30px;
+                height: 70%;
+                width: 60%;
+                float:right;
+            }
+            .secondarytitle {
+                padding-left: 20px;
+                color: black;
+                font-size: 3rem;
+                height: 100%;
+                display: flex;
+            }
+
+            #green {
+                color: #6699FF;
+                padding-left:30px;
+                padding-top:20px;
+            }
+
+            #secondarytitleenter {
+                padding-top:20px;
+                color: lightgray;
+                padding-right: 30px;
+                /* border-right: 3px solid lightgray; */
+            }
+
+            #englishsearch2 {
+                border-radius: 25px !important;
+                width:100% !important;
+                margin-right: 20px !important;
+            }
+            #rest {
+                padding-top:20px;
+                color: black;
+                padding-right: 15px;
+            }
+
+            .verticalnavbar {
+                overflow-y: hidden;
+                overflow-x: auto;
+                margin-left:50px;
+                display: flex;
+                margin-top: 50px;
+                background-color: white;
+            }
+
+            .piece {
+                white-space: nowrap;
+                color: #6699FF !important;
+                border: 1px solid lightgray;
+                max-height: 60px;    
+                min-height: 60px; 
+                vertical-align: middle;
+                text-align: center;
+                padding-right: 20px;                
+                padding-left: 20px;
+                font-size: 15px;
+                display: flex; justify-content: center; align-items: center;
+            }
+
+            .piece:hover {
+                background-color: lightgray;
+                color: #6699FF;
+                transform: scale(1.05,1.05);
+            }
+            .engsearchspecial {
+                margin-right: 20px !important;
+                height: 5rem;
+                margin-top: 1.25rem !important;
+                width: 100% !important;
+            }
+            .imgicon2 {
+                width:3.5rem;
+                height:3.5rem;
+                position: relative;
+                float:right;
+                margin-top:-43px;
+                margin-right: 20px;
+            }
+            .home {
+                width: 15%;
+                padding-left: 30px;
+                padding-top:25px;
+                font-weight: bolder;
+                padding-right: 30px;
+                font-size: 2rem;
+            }
+            .homecontainer {
+                background-color: lightgray;
+                color: #6699FF;
+            }
+            .homecontainer:hover {
+                background-color: lightgray;
+                color: #6699FF;
+                transform: scale(1.05,1.05);
+            }
+            #name {
+                padding-top: 20px;
+                height: 100px;
+                text-align: center;
+                vertical-align: center;
+                line-height: 100px;
+                font-size: 30px;
+            }
+
+            .text {
+                margin-top: 200px;
+                padding-left: 50px;
+            }
+            .paratitle {
+                color: black;
+                font-size: 25px;
+                padding-bottom: 25px;
+                padding-top: 25px;
+            }
+
+            .paratitlecontainer {
+                border-bottom: 1px solid lightgray;
+                border-top: 1px solid lightgray;
+                margin-top: 100px;
+            }
+
+            .paratheme, .paratechnique {
+                padding-top:30px;
+                color: black;
+                font-size: 25px;
+                padding-right: 50px;
+                border-radius: 20px;
+                background-color: white;
+                color: #6699ff;
+            }
+
+            
+            .themetitle, .techniquetitle {
+                padding-top:30px;
+                color: black;
+                font-size: 25px;
+                padding-right: 50px;
+                padding-left: 50px;
+            }
+
+            .para {
+                padding-bottom: 80px;
+            }
+            .parathemecontainer, .paratechniquecontainer {
+                border-bottom: 1px solid lightgray;
+                border-top: 1px solid lightgray;
+                display: flex;
+                padding-bottom: 30px;
+            }
+            .themeimg, .techniqueimg {
+                margin-top:20px;
+                width:50px;
+                height:50px;
+            }
+            .info {
+                padding-top: 20px;
+                font-family: 'Poppins', sans-serif;
+                font-size: 18px;
+            }
+            #left {
+                padding-top: 0px;
+            }
+            @media screen and (max-width: 1460px) {
+                /* a stars dont work */
+                    .astar {
+                        padding-right: 50px;
+                    }
+            }
+            @media screen and (max-width: 1200px) {
+                /* a stars dont work */
+                    #grades {
+                        padding-right: 20px;
+                    }
+            }
+
+
+            #credits {
+                position: absolute;
+                top:0;
+                right:0;
+                height: 40px;
+                text-align: right;
+                width: 200px;
+                padding: 10px;
+                color: white;
+                background-color: #6699FF;
+                border-radius: 0px 0px 0px 15px;
+                z-index: 8 !important;
+            }
+            
+            @media only screen and (max-width: 768px) {
+                html, body { 
+                    margin:0;
+                    padding:0;
+                    width:100%;
+                    height:100%;
+                    overflow: auto;
+                }
+                #credits {
+                    display: none;
+                }
+                #realheader {
+                    display: block;
+                }
+                .desc {
+                    display: none;
+                }
+                #big {
+                    text-align: center;
+                    font-size: 25px;
+                    padding-left: 2rem;
+                }
+                #extra {
+                    font-size: 7px;
+                    padding-left: 2rem;
+                    padding-right: 2rem;
+                    padding-top: 0px;
+                }
+                #left {
+                    width: 100% !important;
+                }
+                #grades {
+                    padding:0px;
+                    width: 100%;
+                    margin:0px;
+                    display: flex;
+                }
+                .astar {
+                    width: 50%;
+                    padding-left: 1.75rem;
+                    font-size: 20px;
+                    padding-top: 2rem;
+                    white-space: nowrap;
+                }
+                .sub {
+                    padding-top: 0px;
+                    font-size: 7px;
+                    white-space: nowrap;
+                }
+                .topsec {
+                    padding-top: 2rem;
+                    padding-left: 3rem;
+                    height:auto;
+                    padding-bottom: 3rem;
+                }
+                .optionslist {
+                    font-size: 1rem;
+                }
+                .top, .top2 {
+                    height: 3rem;
+                }
+                .header {
+                    margin-left: -5px;   
+                }
+                .lit {
+                    margin-right: 0px;
+                }
+                .litop {
+                    margin-left: 10px;
+                }
+                .litop2 {
+                    margin-left: 12px;
+                }
+                .option {
+                    white-space: nowrap;
+                }
+                .headergeo {
+                    margin-right: -1rem;
+                }
+                .navbar {
+                    overflow-y: hidden;
+                    overflow-x: scroll;
+                    margin-right: 0px;
+                }
+                .lower {
+                    margin:0;
+                    padding:0;
+                    display: block;
+                }
+                .eng {
+                    padding-left:0.5rem;
+                    width: 100%;
+                }
+                .geo {
+                    left:0;
+                    padding-left:0.5rem;
+                    padding-top: 5rem;
+                    width: 100%;
+                }
+                .search {
+                    padding-left: 15px;
+                    font-size: 10px;
+                }
+
+                .gallery {
+                    width:100%;
+                }
+                #myCarousel {
+                    height: 200px;
+                }
+                #myCarousel2 {
+                    margin-top: 45px;
+                    width:100%;
+                    height: 200px;
+                }
+                .carousel-inner {
+                    margin-top: 45px;
+                    width:100%;
+                    height: 200px;
+                }
+                .galimg {
+                    height: 200px !important;
+                    width:100%;
+                } 
+                .carousel-caption > h3 {
+                    font-size: 12px;
+                }
+                .carousel-caption > p {
+                    font-size: 9px;
+                }
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="loading">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div id='pagecontent'>
+            <div id='credits'>
+                From Keeyan Mukherjee
+            </div>
+            <div class='row topsec'>
+                <div id='realheader' class='row'>
+                    <div id='left' class='col-sm'>
+                        <div id='big'><p class='green'>X</p><p>Notes</p></div>
+                        <div id='extra'>Notes for all IGCSE Geography Case Studies (0460) and all English Literature Pieces (0475)</div>
+                    </div>
+                    <div id='grades' class='col-sm container'>
+                        <div class='astar col'>
+                            A*
+                            <sub class='sub'>Certified in English Literature</sub>
+                        </div>
+                        <div class='astar col'>
+                            A*
+                            <sub class='sub'>Certified in Geography</sub>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class='top row navbar'>
+                <div class='container optionslist'>
+                    <div class='option header lit'>
+                        <p class='optiontext'>Literature</p>
+                        <div class='highlightbar'></div>
+                    </div>
+                    <div class='option'>
+                        <p class='optiontext'>Poetry</p>
+                        <div class='highlightbar'></div>
+                    </div>
+                    <div class='option litop' >
+                        <p class='optiontext'>Prose</p>
+                        <div class='highlightbar'></div>
+                    </div>
+                    <div class='option litop2'>
+                        <p class='optiontext'>Drama</p>
+                        <div class='highlightbar'></div>
+                    </div>
+                    <div class='desc'>
+                        Full Length Poem Analysis + Character and Theme Analysis for The Crucible and A Separate Peace
+                    </div>
+                </div>
+            </div>
+            <div class='top2 row navbar'>
+                <div class='container optionslist'>
+                    <div class='option header headergeo'>
+                        <p class='optiontext'>Geography</p>
+                        <div class='highlightbar'></div>
+                    </div>
+                    <div class='option'>
+                        <p class='optiontext'>Theme 1</p>
+                        <div class='highlightbar'></div>
+                    </div>
+                    <div class='option'>
+                        <p class='optiontext'>Theme 2</p>
+                        <div class='highlightbar'></div>
+                    </div>
+                    <div class='option'>
+                        <p class='optiontext'>Theme 3</p>
+                        <div class='highlightbar'></div>
+                    </div>
+                    <div class='desc descgeopadding'>
+                        Over 30 different detailed Case Studies spanning the entire syllabus 
+                    </div>
+                </div>
+            </div>
+            <div class='container biglow'>
+                <div class='lower row'>
+                    <div class='eng col-sm'>
+                        <div id='subjectheader'>ENGLISH LITERATURE (0475)</div>
+                        <div class='searchbar'>
+                            <input class='search' placeholder='Search for any Title, Poet, Author or Playwright' type='text' id='englishsearch'/>
+                            <img class='imgicon' src='search.png'/>
+                        </div>
+                        <div id='menu-container-eng'></div>
+                        <div class="container enggallery gallery">
+                            <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                                <!-- Indicators -->
+                                <ol class="carousel-indicators">
+                                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                                    <li data-target="#myCarousel" data-slide-to="1"></li>
+                                    <li data-target="#myCarousel" data-slide-to="2"></li>
+                                </ol>
+                        
+                                <!-- Wrapper for slides -->
+                                <div class="carousel-inner">
+                                    <div class="item active">
+                                        <img  class='galimg' src="cbs.jpg" alt="Caged Bird" style="width:100%;">
+                                        <div class="carousel-caption">
+                                            <h3>Caged Bird</h3>
+                                            <p>A Poem written by Maya Angelou</p>
+                                        </div>
+                                    </div>
+                            
+                                    <div class="item">
+                                        <img  class='galimg' src="crucible.jpg" alt="The Crucible" style="width:100%;">
+                                        <div class="carousel-caption">
+                                            <h3>The Crucible</h3>
+                                            <p>A Drama written by Arthur Miller</p>
+                                        </div>
+                                    </div>
+                                
+                                    <div class="item">
+                                        <img  class='galimg' src="asp.jpg" alt="A Separate Peace" style="width:100%;">
+                                        <div class="carousel-caption">
+                                            <h3>A Separate Peace</h3>
+                                            <p>A Novel written by John Knowles</p>
+                                        </div>
+                                    </div>
+                                </div>
+                        
+                                <!-- Left and right controls -->
+                                <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                                    <span class="glyphicon glyphicon-chevron-left"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                                    <span class="glyphicon glyphicon-chevron-right"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='geo col-sm'>
+                        GEOGRAPHY (0460)
+                        <div class='searchbar'>
+                            <input class='search' placeholder='Search for any Location, Topic or Theme' type='text' id='geographysearch'/>
+                            <img class='imgicon' src='search.png'/>
+                        </div>
+                        <div class="container geogallery gallery">
+                            <div id="myCarousel2" class="carousel slide" data-ride="carousel">
+                                <!-- Indicators -->
+                                <ol class="carousel-indicators">
+                                    <li data-target="#myCarousel2" data-slide-to="0" class="active"></li>
+                                    <li data-target="#myCarousel2" data-slide-to="1"></li>
+                                    <li data-target="#myCarousel2" data-slide-to="2"></li>
+                                </ol>
+                        
+                                <!-- Wrapper for slides -->
+                                <div class="carousel-inner">
+                                    <div class="item active">
+                                        <img  class='galimg' src="sahara.jpg" alt="Sahara Desert" style="width:100%;">
+                                        <div class="carousel-caption">
+                                            <h3>Sahara Desert</h3>
+                                            <p>Case Study: A Hot Tropical Desert</p>
+                                        </div>
+                                    </div>
+                            
+                                    <div class="item">
+                                        <img class='galimg' src="volcano.jpg" alt="Mount Merapi" style="width:100%;">
+                                        <div class="carousel-caption">
+                                            <h3>Mount Merapi</h3>
+                                            <p>Case Study: A Volcanic Eruption</p>
+                                        </div>
+                                    </div>
+                                
+                                    <div class="item">
+                                        <img  class='galimg' src="maldives.jpg" alt="Maldives" style="width:100%;">
+                                        <div class="carousel-caption">
+                                            <h3>Maldives</h3>
+                                            <p>Case Study: A Tourist Location</p>
+                                        </div>
+                                    </div>
+                                </div>
+                        
+                                <!-- Left and right controls -->
+                                <a class="left carousel-control" href="#myCarousel2" data-slide="prev">
+                                    <span class="glyphicon glyphicon-chevron-left"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="right carousel-control" href="#myCarousel2" data-slide="next">
+                                    <span class="glyphicon glyphicon-chevron-right"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id='englishcontent' class='container'>
+            <div id='engtop' class='row'>
+                <div class='col secondarytitle'>
+                    <div id='green'>X</div><p id='rest'>Notes: </p>
+                    <div id='secondarytitleenter'></div>
+                </div>
+                <div class='col homecontainer'>
+                    <div class='home'>
+                        Home
+                    </div>
+                </div>
+                <div class='col' id='topsearch'>
+                    <div class='searchbar engsearchspecial'>
+                        <input class='search' placeholder='Search for any Title, Poet, Author or Playwright' type='text' id='englishsearch2'/>
+                        <img class='imgicon2' src='search.png'/>
+                    </div>
+                    <div id='menu-container-eng2'></div>
+                </div>
+            </div>
+            <div id='name' class='row'>
+            </div>
+            <div class='verticalnavbar'>
+            </div>
+            <div class='text'>
+            </div>
+        </div>
+    </body>
+</html>
+
