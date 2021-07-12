@@ -30,6 +30,7 @@
                             var optionstring = datatouse[i]['title'].trim() + ', ' + datatouse[i]['author'].trim()
                             if (!(titles.includes(optionstring))) {
                                 titles.push(optionstring)
+
                                 if (datatouse[i]['type'].trim() == 'P') {
                                     var cat = 'Poetry'
                                 }
@@ -73,6 +74,12 @@
                 $('#englishsearch').catcomplete({
                     source: searchoptions,
                     disabled: false,
+                    open: function (event, ui) {
+                        $("html, body").css({overflow: 'hidden'});
+                    },
+                    close: function () {
+                        $("html, body").css({overflow: 'inherit'});
+                    },
                     minLength: 1,
                     appendTo: '#menu-container-eng',
                     delay: 0,
@@ -104,6 +111,12 @@
                     document.querySelector('#englishcontent').style.display = 'block'
                     $('#englishsearch2').catcomplete({
                         source: searchoptions,
+                        open: function (event, ui) {
+                            $("html, body").css({overflow: 'hidden'});
+                        },
+                        close: function () {
+                            $("html, body").css({overflow: 'inherit'});
+                        },
                         minLength: 1,
                         appendTo: '#menu-container-eng2',
                         delay: 0,
@@ -171,6 +184,12 @@
                     document.querySelector('#englishcontent').style.display = 'block'
                     $('#englishsearch2').catcomplete({
                         source: searchoptions,
+                        open: function (event, ui) {
+                            $("html, body").css({overflow: 'hidden'});
+                        },
+                        close: function () {
+                            $("html, body").css({overflow: 'inherit'});
+                        },
                         minLength: 1,
                         appendTo: '#menu-container-eng2',
                         delay: 0,
@@ -424,7 +443,6 @@
             .ui-helper-hidden-accessible { display:none; }
 
             .ui-autocomplete {
-                position: absolute;
                 overflow-x: auto;
                 border: 2px solid gray;
                 background-color: white;
