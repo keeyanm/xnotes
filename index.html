@@ -259,26 +259,34 @@
                             var para = create('div', 'para')
                             var parathemecontainer = create('div', 'parathemecontainer')
                             var themetitle = create('div', 'themetitle')
+                            var cont1 = create('div', 'cont1')
+                            var cont2 = create('div', 'cont2')
                             var themeimg = create('img', 'themeimg')
                             themeimg.src = 'theme.png'
                             themetitle.innerHTML = 'THEMES: '
                             para.append(parathemecontainer)
 
-                            parathemecontainer.append(themeimg)
-                            parathemecontainer.append(themetitle)
+                            cont1.append(themeimg)
+                            cont1.append(themetitle)
                             var themelist = theme.join(" ").split(',');
                             for (j=0; j < themelist.length;j++) {
                                 var paratheme = create('div', 'paratheme')
                                 paratheme.innerHTML = themelist[j].trim()
-                                parathemecontainer.append(paratheme)
+                                cont2.append(paratheme)
                             }
+                            parathemecontainer.append(cont1)
+                            parathemecontainer.append(cont2)
 
+                            var cont3 = create('div', 'cont1')
+                            var cont4 = create('div', 'cont2')
                             var paratechniquecontainer = create('div', 'paratechniquecontainer')
                             var techniquetitle = create('div', 'techniquetitle')
                             var techniqueimg = create('img', 'techniqueimg')
+
                             techniqueimg.src = 'technique.png'
                             if (category=='Poetry') {
-                                techniquetitle.innerHTML = 'TECHNIQUE: '                            }
+                                techniquetitle.innerHTML = 'TECHNIQUE: ' 
+                            }
                             if (category=='Prose') {
                                 techniquetitle.innerHTML = 'TOPIC: '
                             }
@@ -286,15 +294,19 @@
                                 techniquetitle.innerHTML = 'TOPIC: '
                             }
                             para.append(paratechniquecontainer)
-                            paratechniquecontainer.append(techniqueimg)
-                            paratechniquecontainer.append(techniquetitle)
+                            cont3.append(techniqueimg)
+                            cont3.append(techniquetitle)
                             var techniquelist = dataforthis[i]['technique'].join(" ").split(',');
                             console.log(techniquelist);
                             for (j=0; j < techniquelist.length;j++) {
                                 var paratechnique = create('div', 'paratechnique')
                                 paratechnique.innerHTML = techniquelist[j].trim()
-                                paratechniquecontainer.append(paratechnique)
+                                cont4.append(paratechnique)
                             }
+
+                            paratechniquecontainer.append(cont3)
+                            paratechniquecontainer.append(cont4)
+
 
                             para.append(paratechniquecontainer)
 
@@ -898,6 +910,9 @@
                 display: flex;
                 padding-bottom: 30px;
             }
+            .cont1, .cont2 {
+                display:flex;
+            }
             .themeimg, .techniqueimg {
                 margin-top:20px;
                 width:50px;
@@ -1115,18 +1130,35 @@
                     overflow-x: auto !important;
                 }
                 #name {
-                    padding-top: 4rem;
+                    margin-top: 20px;
                     height: 70px;
                     line-height: normal;
                     vertical-align: auto;
                     font-size: 15px;
                     padding-left: 2.5rem;
                     text-align: left;
+                    margin-bottom: 20px;
                 }
                 .verticalnavbar {
-                    margin-left:1.5rem;
-                    margin-top: 0px;
+                    margin-left:1rem;
+                    margin-top: 0px !important;
                     padding-top: 0px;
+                }
+                .text {
+                    margin-top: 0rem !important;
+                    padding-left: 1rem;
+                }
+                .paratitlecontainer {
+                    margin-top: 4rem;
+                }
+                .parathemecontainer, .paratechniquecontainer {
+                    display: block;
+                }
+                .cont2 {
+                    display: block;
+                }
+                .themetitle, .techniquetitle {
+                    padding-left: 25px;
                 }
             }
 
