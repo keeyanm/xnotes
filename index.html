@@ -323,6 +323,28 @@
                             searches[i].placeholder = 'Search for any Case Study'
                         }
                     }
+                    document.querySelector('#engtop').innerHTML = `                <div class='mob row'>
+                            <div class='col secondarytitle'>
+                                <div id='green'>X</div><p id='rest'>Notes: </p>
+                                <div id='secondarytitleenter'></div>
+                            </div>
+                            <div class='col homecontainer'>
+                                <div class='home'>
+                                    Home
+                                </div>
+                            </div>
+                        </div>
+                        <div class='mob2 row'>
+                            <div class='col' id='topsearch'>
+                                <div class='searchbar engsearchspecial'>
+                                    <input class='search' placeholder='Search for any Title, Poet, Author or Playwright' type='text' id='englishsearch2'/>
+                                    <img class='imgicon2' src='search.png'/>
+                                </div>
+                                <div id='menu-container-eng2'></div>
+                            </div>
+                        </div>
+                    `
+
                 }
                 $.widget( "custom.catcomplete", $.ui.autocomplete, {
                     _renderMenu: function( ul, items ) {
@@ -1009,12 +1031,15 @@
                 .eng {
                     padding-left:0.5rem;
                     width: 100%;
+                    border-right: none;
                 }
                 .geo {
                     left:0;
                     padding-left:0.5rem;
                     padding-top: 5rem;
                     width: 100%;
+                    border-right: none;
+                    border-top: 5px solid #3779ff;
                 }
                 .search {
                     padding-left: 15px;
@@ -1046,6 +1071,62 @@
                 }
                 .carousel-caption > p {
                     font-size: 9px;
+                }
+                .secondarytitle {
+                    padding-left: 2rem;
+                    font-size: 25px;
+                }
+                
+                #green {
+                    color: #3779ff;
+                    padding-left:2rem;
+                }
+
+                .home {
+                    /* width: 15%;
+                    padding-left: 30px;
+                    padding-top:25px; */
+                    font-weight: bolder;
+                    padding-right: 30px;
+                    font-size: 2rem;
+                }
+                .homecontainer {
+                    background-color: lightgray;
+                    color: #6699FF;
+                }
+
+                #engtop {
+                    height: 140px;
+                    display: block;
+                }
+                .mob {
+                    height: 70px;
+                    display: flex;
+                }
+                #topsearch {
+                    padding-top: 1rem;
+                    padding-left:4rem;
+                    padding-right:4rem;
+                    width: 100%;
+                    float:left;
+                }
+                .ui-menu-item {
+                    overflow: auto !important;
+                    overflow-x: auto !important;
+                }
+                #name {
+                    padding-top: 4rem;
+                    height: 70px;
+                    line-height: normal;
+                    vertical-align: auto;
+                    font-size: 15px;
+                    padding-left: 2.5rem;
+                    text-align: left;
+                }
+                .verticalnavbar {
+                    margin-left:1.5rem;
+                    margin-top: 0px;
+                    padding-top: 0px;
                 }
             }
 
