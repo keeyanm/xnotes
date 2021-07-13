@@ -70,14 +70,22 @@
                 })
             }
 
+            function sortByKey(array, key) {
+                return array.sort(function(a, b) {
+                    var x = a[key]; var y = b[key];
+                    return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+                });
+            }
+
             function populateenglish(searchoptions, data) {
+                searchoptions = sortByKey(searchoptions, 'category')
                 $('#englishsearch').catcomplete({
                     source: searchoptions,
                     disabled: false,
                     open: function (event, ui) {
                         $("html, body").css({overflow: 'hidden'});
                     },
-                    close: function () {
+                    close: function (event, ui) {
                         $("html, body").css({overflow: 'inherit'});
                     },
                     minLength: 1,
@@ -109,6 +117,7 @@
                     console.log(category);
                     document.querySelector('#pagecontent').style.display = 'none'
                     document.querySelector('#englishcontent').style.display = 'block'
+                    searchoptions = sortByKey(searchoptions, 'category')
                     $('#englishsearch2').catcomplete({
                         source: searchoptions,
                         open: function (event, ui) {
@@ -225,7 +234,14 @@
                         document.querySelector('#englishcontent').style.display = 'none'
                         document.querySelector('#pagecontent').style.display = 'block'
                         document.querySelector('#englishsearch').value = '';
-                        document.querySelector('.text').innerHTML = '';
+                        document.querySelector('#englishsearch2').value = '';
+                        document.querySelector('.searchbar').innerHTML =    
+                        `
+                        <input class='search' placeholder='Search for any Title, Poet, Author or Playwright' type='text' id='englishsearch'/>
+                            <img class='imgicon' src='search.png'/>
+                        `;
+                        document.querySelector('#menu-container-eng').innerHTML = ''
+                        populateenglish(searchoptions, datatouse);
                     })
                     var pieces = vnav.childNodes
                     for (i=0; i < pieces.length; i++) {
@@ -340,6 +356,9 @@
                     }
                     console.log(dataforthis);
                 }
+                // console.log(document.querySelector("#menu-container-eng").innerHTML)
+                // document.querySelector(".ui-autocomplete").innerHTML = '';
+                // console.log(document.querySelector("#menu-container-eng").innerHTML)
             }
 
             document.addEventListener('DOMContentLoaded', function () {
@@ -447,7 +466,8 @@
                 border: 2px solid gray;
                 background-color: white;
                 cursor: default;
-                z-index: 300 !important;
+                position: absolute;
+                z-index:30 !important;
                 padding-left: 0px;
             }
 
@@ -817,6 +837,7 @@
             }
 
             .verticalnavbar {
+                z-index: 0.5;
                 overflow-y: hidden;
                 overflow-x: auto;
                 margin-left:50px;
