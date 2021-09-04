@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> 
-        <script src ="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&family=Poppins:wght@200&family=Roboto:wght@100;300&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
-        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css>
+        <script src =https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js></script>
+        <script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js></script>
+        <link rel="preconnect" href=https://fonts.googleapis.com>
+        <link rel="preconnect" href=https://fonts.gstatic.com crossorigin>
+        <link href=https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&family=Poppins:wght@200&family=Roboto:wght@100;300&display=swap rel="stylesheet">
+        <link href=https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap rel="stylesheet">
+        <script src=http://code.jquery.com/ui/1.9.2/jquery-ui.js></script>
+        <script src=https://code.jquery.com/jquery-migrate-3.0.0.min.js></script>
         <script>
             var datatouse;
             var searchoptions;
             function getdataenglish() {
                 $.ajax({
                     type:"GET",
-                    url: "https://trezlorapi.azurewebsites.net/xnotes",
+                    url: 'https://trezlorapi.azurewebsites.net/xnotes',
                     success: function(data){
                         document.querySelector('#pagecontent').style.opacity = 1;
                         document.querySelector('body').style.pointerEvents = 'auto';
@@ -30,7 +29,6 @@
                             var optionstring = datatouse[i]['title'].trim() + ', ' + datatouse[i]['author'].trim()
                             if (!(titles.includes(optionstring))) {
                                 titles.push(optionstring)
-
                                 if (datatouse[i]['type'].trim() == 'P') {
                                     var cat = 'Poetry'
                                 }
@@ -70,24 +68,10 @@
                 })
             }
 
-            function sortByKey(array, key) {
-                return array.sort(function(a, b) {
-                    var x = a[key]; var y = b[key];
-                    return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-                });
-            }
-
             function populateenglish(searchoptions, data) {
-                searchoptions = sortByKey(searchoptions, 'category')
                 $('#englishsearch').catcomplete({
                     source: searchoptions,
                     disabled: false,
-                    open: function (event, ui) {
-                        $("html, body").css({overflow: 'hidden'});
-                    },
-                    close: function (event, ui) {
-                        $("html, body").css({overflow: 'inherit'});
-                    },
                     minLength: 1,
                     appendTo: '#menu-container-eng',
                     delay: 0,
@@ -117,15 +101,8 @@
                     console.log(category);
                     document.querySelector('#pagecontent').style.display = 'none'
                     document.querySelector('#englishcontent').style.display = 'block'
-                    searchoptions = sortByKey(searchoptions, 'category')
                     $('#englishsearch2').catcomplete({
                         source: searchoptions,
-                        open: function (event, ui) {
-                            $("html, body").css({overflow: 'hidden'});
-                        },
-                        close: function () {
-                            $("html, body").css({overflow: 'inherit'});
-                        },
                         minLength: 1,
                         appendTo: '#menu-container-eng2',
                         delay: 0,
@@ -160,7 +137,8 @@
                     document.querySelector('.homecontainer').addEventListener('click', function() {
                         document.querySelector('#englishcontent').style.display = 'none'
                         document.querySelector('#pagecontent').style.display = 'block'
-                        document.querySelector('#englishsearch').value = '';
+                        document.querySelector('.text').innerHTML = '';
+                        window.location.reload()
                     })
                     var pieces = vnav.childNodes
                     for (i=0; i < pieces.length; i++) {
@@ -193,12 +171,6 @@
                     document.querySelector('#englishcontent').style.display = 'block'
                     $('#englishsearch2').catcomplete({
                         source: searchoptions,
-                        open: function (event, ui) {
-                            $("html, body").css({overflow: 'hidden'});
-                        },
-                        close: function () {
-                            $("html, body").css({overflow: 'inherit'});
-                        },
                         minLength: 1,
                         appendTo: '#menu-container-eng2',
                         delay: 0,
@@ -233,15 +205,8 @@
                     document.querySelector('.homecontainer').addEventListener('click', function() {
                         document.querySelector('#englishcontent').style.display = 'none'
                         document.querySelector('#pagecontent').style.display = 'block'
-                        document.querySelector('#englishsearch').value = '';
-                        document.querySelector('#englishsearch2').value = '';
-                        document.querySelector('.searchbar').innerHTML =    
-                        `
-                        <input class='search' placeholder='Search for any Title, Poet, Author or Playwright' type='text' id='englishsearch'/>
-                            <img class='imgicon' src='search.png'/>
-                        `;
-                        document.querySelector('#menu-container-eng').innerHTML = ''
-                        populateenglish(searchoptions, datatouse);
+                        document.querySelector('.text').innerHTML = '';
+                        window.location.reload()
                     })
                     var pieces = vnav.childNodes
                     for (i=0; i < pieces.length; i++) {
@@ -295,34 +260,26 @@
                             var para = create('div', 'para')
                             var parathemecontainer = create('div', 'parathemecontainer')
                             var themetitle = create('div', 'themetitle')
-                            var cont1 = create('div', 'cont1')
-                            var cont2 = create('div', 'cont2')
                             var themeimg = create('img', 'themeimg')
                             themeimg.src = 'theme.png'
                             themetitle.innerHTML = 'THEMES: '
                             para.append(parathemecontainer)
 
-                            cont1.append(themeimg)
-                            cont1.append(themetitle)
+                            parathemecontainer.append(themeimg)
+                            parathemecontainer.append(themetitle)
                             var themelist = theme.join(" ").split(',');
                             for (j=0; j < themelist.length;j++) {
                                 var paratheme = create('div', 'paratheme')
                                 paratheme.innerHTML = themelist[j].trim()
-                                cont2.append(paratheme)
+                                parathemecontainer.append(paratheme)
                             }
-                            parathemecontainer.append(cont1)
-                            parathemecontainer.append(cont2)
 
-                            var cont3 = create('div', 'cont1')
-                            var cont4 = create('div', 'cont2')
                             var paratechniquecontainer = create('div', 'paratechniquecontainer')
                             var techniquetitle = create('div', 'techniquetitle')
                             var techniqueimg = create('img', 'techniqueimg')
-
                             techniqueimg.src = 'technique.png'
                             if (category=='Poetry') {
-                                techniquetitle.innerHTML = 'TECHNIQUE: ' 
-                            }
+                                techniquetitle.innerHTML = 'TECHNIQUE: '                            }
                             if (category=='Prose') {
                                 techniquetitle.innerHTML = 'TOPIC: '
                             }
@@ -330,19 +287,15 @@
                                 techniquetitle.innerHTML = 'TOPIC: '
                             }
                             para.append(paratechniquecontainer)
-                            cont3.append(techniqueimg)
-                            cont3.append(techniquetitle)
+                            paratechniquecontainer.append(techniqueimg)
+                            paratechniquecontainer.append(techniquetitle)
                             var techniquelist = dataforthis[i]['technique'].join(" ").split(',');
                             console.log(techniquelist);
                             for (j=0; j < techniquelist.length;j++) {
                                 var paratechnique = create('div', 'paratechnique')
                                 paratechnique.innerHTML = techniquelist[j].trim()
-                                cont4.append(paratechnique)
+                                paratechniquecontainer.append(paratechnique)
                             }
-
-                            paratechniquecontainer.append(cont3)
-                            paratechniquecontainer.append(cont4)
-
 
                             para.append(paratechniquecontainer)
 
@@ -356,47 +309,9 @@
                     }
                     console.log(dataforthis);
                 }
-                // console.log(document.querySelector("#menu-container-eng").innerHTML)
-                // document.querySelector(".ui-autocomplete").innerHTML = '';
-                // console.log(document.querySelector("#menu-container-eng").innerHTML)
             }
 
             document.addEventListener('DOMContentLoaded', function () {
-                var x = window.matchMedia("(max-width: 768px)")
-                if (x.matches) {
-                    var searches = document.querySelectorAll('.search');
-                    for (i=0; i < searches.length; i++) {
-                        console.log(searches[i])
-                        if (i==0) {
-                            searches[i].placeholder = 'Search for any Title or Writer'
-                        }
-                        else {
-                            searches[i].placeholder = 'Search for any Case Study'
-                        }
-                    }
-                    document.querySelector('#engtop').innerHTML = `                <div class='mob row'>
-                            <div class='col secondarytitle'>
-                                <div id='green'>X</div><p id='rest'>Notes: </p>
-                                <div id='secondarytitleenter'></div>
-                            </div>
-                            <div class='col homecontainer'>
-                                <div class='home'>
-                                    Home
-                                </div>
-                            </div>
-                        </div>
-                        <div class='mob2 row'>
-                            <div class='col' id='topsearch'>
-                                <div class='searchbar engsearchspecial'>
-                                    <input class='search' placeholder='Search for any Title, Poet, Author or Playwright' type='text' id='englishsearch2'/>
-                                    <img class='imgicon2' src='search.png'/>
-                                </div>
-                                <div id='menu-container-eng2'></div>
-                            </div>
-                        </div>
-                    `
-
-                }
                 $.widget( "custom.catcomplete", $.ui.autocomplete, {
                     _renderMenu: function( ul, items ) {
                         var that = this,
@@ -412,10 +327,10 @@
                 });
                 getdataenglish();
                 $('#credits').hover(function() {
-                    $(this).html('This is a description of why I am suited to be giving you notes and about how truly fantastic I am and I will fill this later')
+                    $(this).html('I achieved 10 A Stars in my IGCSE Program in 2021, as well as the subject award for English Literature and 7 other subjects. This is a website detailing all the notes I wrote to help me produce my analytical essays for this program. Any queries or questions can be directed to keeyan2502@gmail.com')
                     $('#credits').animate({
                         width: '750px',
-                        height: '150px'
+                        height: '100px'
                     })
                     $(this).css('text-align', 'left')
                     },
@@ -462,12 +377,12 @@
             .ui-helper-hidden-accessible { display:none; }
 
             .ui-autocomplete {
+                position: absolute;
                 overflow-x: auto;
                 border: 2px solid gray;
                 background-color: white;
                 cursor: default;
-                position: absolute;
-                z-index:30 !important;
+                z-index: 300 !important;
                 padding-left: 0px;
             }
 
@@ -551,7 +466,6 @@
                 position: relative;
                 z-index: 2 !important;
             }
-
             .optiontext {
                 padding-left: 25px;
                 padding-right: 25px;
@@ -837,8 +751,8 @@
             }
 
             .verticalnavbar {
-                z-index: 0.5;
                 overflow-y: hidden;
+                width: 100%;
                 overflow-x: auto;
                 margin-left:50px;
                 display: flex;
@@ -848,16 +762,9 @@
 
             .piece {
                 white-space: nowrap;
-                color: #6699FF !important;
                 border: 1px solid lightgray;
-                max-height: 60px;    
-                min-height: 60px; 
-                vertical-align: middle;
-                text-align: center;
-                padding-right: 20px;                
-                padding-left: 20px;
-                font-size: 15px;
-                display: flex; justify-content: center; align-items: center;
+                padding: 20px;
+                color: #6699FF !important;
             }
 
             .piece:hover {
@@ -950,9 +857,6 @@
                 display: flex;
                 padding-bottom: 30px;
             }
-            .cont1, .cont2 {
-                display:flex;
-            }
             .themeimg, .techniqueimg {
                 margin-top:20px;
                 width:50px;
@@ -972,13 +876,12 @@
                         padding-right: 50px;
                     }
             }
-            @media screen and (max-width: 1200px) {
+            @media screen and (max-width: 1200) {
                 /* a stars dont work */
                     #grades {
                         padding-right: 20px;
                     }
             }
-
 
             #credits {
                 position: absolute;
@@ -993,215 +896,44 @@
                 border-radius: 0px 0px 0px 15px;
                 z-index: 8 !important;
             }
-            
-            @media only screen and (max-width: 768px) {
-                html, body { 
-                    margin:0;
-                    padding:0;
-                    width:100%;
-                    height:100%;
-                    overflow: auto;
-                }
-                #credits {
-                    display: none;
-                }
-                #realheader {
-                    display: block;
-                }
-                .desc {
-                    display: none;
-                }
-                #big {
-                    text-align: center;
-                    font-size: 25px;
-                    padding-left: 2rem;
-                }
-                #extra {
-                    font-size: 7px;
-                    padding-left: 2rem;
-                    padding-right: 2rem;
-                    padding-top: 0px;
-                }
-                #left {
-                    width: 100% !important;
-                }
-                #grades {
-                    padding:0px;
-                    width: 100%;
-                    margin:0px;
-                    display: flex;
-                }
-                .astar {
-                    width: 50%;
-                    padding-left: 1.75rem;
-                    font-size: 20px;
-                    padding-top: 2rem;
-                    white-space: nowrap;
-                }
-                .sub {
-                    padding-top: 0px;
-                    font-size: 7px;
-                    white-space: nowrap;
-                }
-                .topsec {
-                    padding-top: 2rem;
-                    padding-left: 3rem;
-                    height:auto;
-                    padding-bottom: 3rem;
-                }
-                .optionslist {
-                    font-size: 1rem;
-                }
-                .top, .top2 {
-                    height: 3rem;
-                }
-                .header {
-                    margin-left: -5px;   
-                }
-                .lit {
-                    margin-right: 0px;
-                }
-                .litop {
-                    margin-left: 10px;
-                }
-                .litop2 {
-                    margin-left: 12px;
-                }
-                .option {
-                    white-space: nowrap;
-                }
-                .headergeo {
-                    margin-right: -1rem;
-                }
-                .navbar {
-                    overflow-y: hidden;
-                    overflow-x: scroll;
-                    margin-right: 0px;
-                }
-                .lower {
-                    margin:0;
-                    padding:0;
-                    display: block;
-                }
-                .eng {
-                    padding-left:0.5rem;
-                    width: 100%;
-                    border-right: none;
-                }
-                .geo {
-                    left:0;
-                    padding-left:0.5rem;
-                    padding-top: 5rem;
-                    width: 100%;
-                    border-right: none;
-                    border-top: 5px solid #3779ff;
-                }
-                .search {
-                    padding-left: 15px;
-                    font-size: 10px;
-                }
 
-                .gallery {
-                    width:100%;
-                }
-                #myCarousel {
-                    height: 200px;
-                }
-                #myCarousel2 {
-                    margin-top: 45px;
-                    width:100%;
-                    height: 200px;
-                }
-                .carousel-inner {
-                    margin-top: 45px;
-                    width:100%;
-                    height: 200px;
-                }
-                .galimg {
-                    height: 200px !important;
-                    width:100%;
-                } 
-                .carousel-caption > h3 {
-                    font-size: 12px;
-                }
-                .carousel-caption > p {
-                    font-size: 9px;
-                }
-                .secondarytitle {
-                    padding-left: 2rem;
-                    font-size: 25px;
-                }
-                
-                #green {
-                    color: #3779ff;
-                    padding-left:2rem;
-                }
-
-                .home {
-                    /* width: 15%;
-                    padding-left: 30px;
-                    padding-top:25px; */
-                    font-weight: bolder;
-                    padding-right: 30px;
-                    font-size: 2rem;
-                }
-                .homecontainer {
-                    background-color: lightgray;
-                    color: #6699FF;
-                }
-
-                #engtop {
-                    height: 140px;
-                    display: block;
-                }
-                .mob {
-                    height: 70px;
-                    display: flex;
-                }
-                #topsearch {
-                    padding-top: 1rem;
-                    padding-left:4rem;
-                    padding-right:4rem;
-                    width: 100%;
-                    float:left;
-                }
-                .ui-menu-item {
-                    overflow: auto !important;
-                    overflow-x: auto !important;
-                }
-                #name {
-                    margin-top: 20px;
-                    height: 70px;
-                    line-height: normal;
-                    vertical-align: auto;
-                    font-size: 15px;
-                    padding-left: 2.5rem;
-                    text-align: left;
-                    margin-bottom: 20px;
-                }
-                .verticalnavbar {
-                    margin-left:1rem;
-                    margin-top: 0px !important;
-                    padding-top: 0px;
-                }
-                .text {
-                    margin-top: 0rem !important;
-                    padding-left: 1rem;
-                }
-                .paratitlecontainer {
-                    margin-top: 4rem;
-                }
-                .parathemecontainer, .paratechniquecontainer {
-                    display: block;
-                }
-                .cont2 {
-                    display: block;
-                }
-                .themetitle, .techniquetitle {
-                    padding-left: 25px;
-                }
+            .geoastar {
+                display: none;
             }
-
+            .top2 {
+                display: none !important;
+            }
+            .geo {
+                display: none !important;
+            }
+            .col-sm {
+                width:100%;
+                height:100%;
+            }
+            .eng {
+                padding-top: 20px;
+                padding-left: 50px;
+                border-right: none;
+            }
+            .gallery {
+                width: 50%;
+                max-width: 600px;
+            }
+            .gallerysider {
+                margin-top: 45px;
+                width: 50%;
+            }
+            #engseccont {
+                display: flex;
+            }
+            #deschead {
+                color: #60b922;
+                font-size: 3rem;
+                font-weight: 900;
+            }
+            .gallerysider > ul > li > b {
+                color: #60b922;
+            }
         </style>
     </head>
     <body>
@@ -1219,14 +951,14 @@
                 <div id='realheader' class='row'>
                     <div id='left' class='col-sm'>
                         <div id='big'><p class='green'>X</p><p>Notes</p></div>
-                        <div id='extra'>Notes for all IGCSE Geography Case Studies (0460) and all English Literature Pieces (0475)</div>
+                        <div id='extra'>Notes for all English Literature Pieces (0475), <i>with all IGCSE Geography Case Studies (0460) coming soon</i></div>
                     </div>
                     <div id='grades' class='col-sm container'>
                         <div class='astar col'>
                             A*
                             <sub class='sub'>Certified in English Literature</sub>
                         </div>
-                        <div class='astar col'>
+                        <div class='astar col geoastar'>
                             A*
                             <sub class='sub'>Certified in Geography</sub>
                         </div>
@@ -1250,9 +982,6 @@
                     <div class='option litop2'>
                         <p class='optiontext'>Drama</p>
                         <div class='highlightbar'></div>
-                    </div>
-                    <div class='desc'>
-                        Full Length Poem Analysis + Character and Theme Analysis for The Crucible and A Separate Peace
                     </div>
                 </div>
             </div>
@@ -1282,57 +1011,71 @@
             <div class='container biglow'>
                 <div class='lower row'>
                     <div class='eng col-sm'>
-                        <div id='subjectheader'>ENGLISH LITERATURE (0475)</div>
+                        ENGLISH LITERATURE (0475)
                         <div class='searchbar'>
                             <input class='search' placeholder='Search for any Title, Poet, Author or Playwright' type='text' id='englishsearch'/>
                             <img class='imgicon' src='search.png'/>
                         </div>
                         <div id='menu-container-eng'></div>
-                        <div class="container enggallery gallery">
-                            <div id="myCarousel" class="carousel slide" data-ride="carousel">
-                                <!-- Indicators -->
-                                <ol class="carousel-indicators">
-                                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-                                    <li data-target="#myCarousel" data-slide-to="1"></li>
-                                    <li data-target="#myCarousel" data-slide-to="2"></li>
-                                </ol>
-                        
-                                <!-- Wrapper for slides -->
-                                <div class="carousel-inner">
-                                    <div class="item active">
-                                        <img  class='galimg' src="cbs.jpg" alt="Caged Bird" style="width:100%;">
-                                        <div class="carousel-caption">
-                                            <h3>Caged Bird</h3>
-                                            <p>A Poem written by Maya Angelou</p>
+                        <div id='engseccont'>
+                            <div class="container enggallery gallery">
+                                <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                                    <!-- Indicators -->
+                                    <ol class="carousel-indicators">
+                                        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                                        <li data-target="#myCarousel" data-slide-to="1"></li>
+                                        <li data-target="#myCarousel" data-slide-to="2"></li>
+                                    </ol>
+                            
+                                    <!-- Wrapper for slides -->
+                                    <div class="carousel-inner">
+                                        <div class="item active">
+                                            <img  class='galimg' src="cbs.jpg" alt="Caged Bird" style="width:100%;">
+                                            <div class="carousel-caption">
+                                                <h3>Caged Bird</h3>
+                                                <p>A Poem written by Maya Angelou</p>
+                                            </div>
+                                        </div>
+                                
+                                        <div class="item">
+                                            <img  class='galimg' src="crucible.jpg" alt="The Crucible" style="width:100%;">
+                                            <div class="carousel-caption">
+                                                <h3>The Crucible</h3>
+                                                <p>A Drama written by Arthur Miller</p>
+                                            </div>
+                                        </div>
+                                    
+                                        <div class="item">
+                                            <img  class='galimg' src="asp.jpg" alt="A Separate Peace" style="width:100%;">
+                                            <div class="carousel-caption">
+                                                <h3>A Separate Peace</h3>
+                                                <p>A Novel written by John Knowles</p>
+                                            </div>
                                         </div>
                                     </div>
                             
-                                    <div class="item">
-                                        <img  class='galimg' src="crucible.jpg" alt="The Crucible" style="width:100%;">
-                                        <div class="carousel-caption">
-                                            <h3>The Crucible</h3>
-                                            <p>A Drama written by Arthur Miller</p>
-                                        </div>
-                                    </div>
-                                
-                                    <div class="item">
-                                        <img  class='galimg' src="asp.jpg" alt="A Separate Peace" style="width:100%;">
-                                        <div class="carousel-caption">
-                                            <h3>A Separate Peace</h3>
-                                            <p>A Novel written by John Knowles</p>
-                                        </div>
-                                    </div>
+                                    <!-- Left and right controls -->
+                                    <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                                        <span class="glyphicon glyphicon-chevron-left"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                                        <span class="glyphicon glyphicon-chevron-right"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
                                 </div>
-                        
-                                <!-- Left and right controls -->
-                                <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-                                    <span class="glyphicon glyphicon-chevron-left"></span>
-                                    <span class="sr-only">Previous</span>
-                                </a>
-                                <a class="right carousel-control" href="#myCarousel" data-slide="next">
-                                    <span class="glyphicon glyphicon-chevron-right"></span>
-                                    <span class="sr-only">Next</span>
-                                </a>
+                            </div>
+                            <div class='gallerysider'>
+                                <ul>
+                                    <div id='deschead'>What is this website?</div>
+                                    <br>
+                                    <br>
+                                    <li>Over 1500 words of analysis for each poem, and for the pieces of literature chosen, there is extensive <b>character</b> and <b>thematic</b> analyses.</li>
+                                    <br>
+                                    <li>Specific <b>techniques</b> and <b>themes</b> for each poem along with an introductory paragraph for each analysis</li>
+                                    <br>
+                                    <li>All analysis is separated for different sets of <b>quotations</b> from the piece of literature</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
