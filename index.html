@@ -389,14 +389,7 @@
                 if (x.matches) {
                     var searches = document.querySelectorAll('.search');
                     for (i=0; i < searches.length; i++) {
-                        console.log(searches[i])
-                        console.log(i)
-                        if (i==0) {
-                            searches[i].placeholder = 'Search for any Title or Writer'
-                        }
-                        else {
-                            searches[i].placeholder = 'Search for any Case Study'
-                        }
+                        searches[i].placeholder = 'Search for any Title or Writer'
                     }
                     document.querySelector('#engtop').innerHTML = `                <div class='mob row'>
                             <div class='col secondarytitle'>
